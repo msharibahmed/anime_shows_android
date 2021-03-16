@@ -1,10 +1,11 @@
+//libraries
 import 'dart:convert';
-
+import 'package:flutter/foundation.dart';
+//packages
+import 'package:http/http.dart' as http;
+//models
 import '../model/episode_links_model.dart';
 import '../model/search_details_model.dart';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
-
 import '../model/latest_model.dart';
 import '../model/search_result_model.dart';
 
@@ -21,7 +22,7 @@ class HttpCalls with ChangeNotifier {
     return [..._episodeLinks];
   }
 
-  List<LatestModel> get latestRelaease {
+  List<LatestModel> get latestRelease {
     return [..._latestRelease];
   }
 
@@ -38,35 +39,9 @@ class HttpCalls with ChangeNotifier {
     // notifyListeners();
   }
 
-  Future<void> showEpisodelinks(String episodeEndPoint) async {
-    final url = 'https://anime-rest-api.herokuapp.com/episode/$episodeEndPoint';
-    print(url);
-
-    print('function executed');
-    try {
-      final response = await http.get(Uri.parse(url));
-      // print(response);
-
-      final _jsonDecode = jsonDecode(response.body);
-      // print(_jsonDecode);
-      List<EpisodeLinksModel> _loadedData = [];
-      _jsonDecode.forEach((element) {
-        _loadedData.add(EpisodeLinksModel(
-            link: element['link'], quality: element['quality']));
-      });
-      _episodeLinks = _loadedData;
-      print(_episodeLinks);
-    } catch (error) {
-      print('error while calling show episode link http call');
-      print(error);
-    }
-
-    notifyListeners();
-  }
-
   Future<void> showLatestRelease(int page) async {
     final url = 'https://anime-rest-api.herokuapp.com/home/$page';
-    print('function executed');
+    print('showLatestRelease http function executed');
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -88,10 +63,41 @@ class HttpCalls with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> showSearchResult(String search) async {
+    final url = 'https://anime-rest-api.herokuapp.com/search/$search';
+
+    print('showSearchResult http function executed');
+    try {
+      final response = await http.get(Uri.parse(url));
+      // print(response);
+
+      final _jsonDecode = jsonDecode(response.body);
+      // print(_jsonDecode);
+      if (_jsonDecode[0] != {'status_code': '404'}) {
+        List<SearchResultModel> _loadedData = [];
+        _jsonDecode.forEach((element) {
+          _loadedData.add(SearchResultModel(
+              name: element['name'],
+              poster: element['poster'],
+              release: element['release'],
+              link: element['link']));
+        });
+        _searchResult = _loadedData;
+      } else if (_jsonDecode[0] == {'status_code': '404'}) {
+        _searchResult.clear();
+      }
+    } catch (error) {
+      print('error while calling show search result http call');
+      print(error);
+    }
+
+    notifyListeners();
+  }
+
   Future<void> showSearchDetails(String link) async {
     final url = 'https://anime-rest-api.herokuapp.com/searchdetails/$link';
 
-    print('function executed');
+    print('showSearchDetails http function executed');
     try {
       final response = await http.get(Uri.parse(url));
       // print(response);
@@ -116,31 +122,26 @@ class HttpCalls with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> showSearchResult(String search) async {
-    final url = 'https://anime-rest-api.herokuapp.com/search/$search';
+  Future<void> showEpisodelinks(String episodeEndPoint) async {
+    final url = 'https://anime-rest-api.herokuapp.com/episode/$episodeEndPoint';
+    print(url);
 
-    print('function executed');
+    print('showEpisodelinks http function executed');
     try {
       final response = await http.get(Uri.parse(url));
       // print(response);
 
       final _jsonDecode = jsonDecode(response.body);
       // print(_jsonDecode);
-      if (_jsonDecode[0] != {'status_code': '404'}) {
-        List<SearchResultModel> _loadedData = [];
-        _jsonDecode.forEach((element) {
-          _loadedData.add(SearchResultModel(
-              name: element['name'],
-              poster: element['poster'],
-              release: element['release'],
-              link: element['link']));
-        });
-        _searchResult = _loadedData;
-      } else if (_jsonDecode[0] == {'status_code': '404'}) {
-        _searchResult.clear();
-      }
+      List<EpisodeLinksModel> _loadedData = [];
+      _jsonDecode.forEach((element) {
+        _loadedData.add(EpisodeLinksModel(
+            link: element['link'], quality: element['quality']));
+      });
+      _episodeLinks = _loadedData;
+      print(_episodeLinks);
     } catch (error) {
-      print('error while calling show search result http call');
+      print('error while calling show episode link http call');
       print(error);
     }
 
