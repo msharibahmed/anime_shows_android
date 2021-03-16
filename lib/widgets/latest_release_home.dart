@@ -1,5 +1,8 @@
-import 'package:anime_shows_android/model/latest_model.dart';
+//libraries
 import 'package:flutter/material.dart';
+//models
+import '../model/latest_model.dart';
+
 
 class LatestReleaseHome extends StatelessWidget {
   final LatestModel latestRelease;
