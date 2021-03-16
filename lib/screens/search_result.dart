@@ -1,9 +1,14 @@
-import '../provider/http_calls.dart';
-import '../widgets/show_result_card.dart';
+//libraries
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+//packages
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+//widgets
+import '../widgets/show_result_card.dart';
+//provider
+import '../provider/http_calls.dart';
 
 class SearchResult extends StatefulWidget {
   static const routeName = 'search-result-screen';
@@ -19,7 +24,6 @@ class _SearchResultState extends State<SearchResult> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_boolCheck1) {
-      print('did change dependices');
       final search = ModalRoute.of(context).settings.arguments as String;
 
       Provider.of<HttpCalls>(context).showSearchResult(search).then((_) {
@@ -33,30 +37,32 @@ class _SearchResultState extends State<SearchResult> {
 
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<HttpCalls>(context, listen: false).searchResult;
+    final searchResultList =
+        Provider.of<HttpCalls>(context, listen: false).searchResult;
     final args = ModalRoute.of(context).settings.arguments as String;
 
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+        child: Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
           ),
-          backgroundColor: Colors.black,
-          title: Text('Showing Results for ' + '"$args"',
-              style: GoogleFonts.openSans(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: Colors.white)),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        body: Column(
+        title: Text('Showing Results for ' + '"$args"',
+            style: GoogleFonts.openSans(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: Colors.white)),
+      ),
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -69,14 +75,14 @@ class _SearchResultState extends State<SearchResult> {
                           itemBuilder: (context, index) => ShowResultCard(
                               index: index,
                               loading1: _loading1,
-                              text1: '',
-                              text2: '',
-                              poster: '',
-                              link: ''),
+                              animeName: '',
+                              animeRelease: '',
+                              animePoster: '',
+                              animeLink: ''),
                           itemCount: 15,
                         ),
                       )
-                    : data.length == 0
+                    : searchResultList.length == 0
                         ? Center(
                             child: Image.network(
                                 'https://cdn.dribbble.com/users/1242216/screenshots/9326781/media/6384fef8088782664310666d3b7d4bf2.png'),
@@ -85,15 +91,15 @@ class _SearchResultState extends State<SearchResult> {
                             itemBuilder: (context, index) => ShowResultCard(
                                 index: index,
                                 loading1: _loading1,
-                                text1: data[index].name,
-                                text2: data[index].release,
-                                poster: data[index].poster,
-                                link: data[index].link),
-                            itemCount: data.length,
+                                animeName: searchResultList[index].name,
+                                animeRelease: searchResultList[index].release,
+                                animePoster: searchResultList[index].poster,
+                                animeLink: searchResultList[index].link),
+                            itemCount: searchResultList.length,
                           )),
           ],
         ),
       ),
-    );
+    ));
   }
 }
