@@ -123,7 +123,7 @@ class _VideoLinksState extends State<VideoLinks> {
     }
   }
 
-  _episodeLinkOnTap(int index) async {
+  _episodeStreamOnTap(int index) async {
     final prov = Provider.of<HttpCalls>(context, listen: false).episodeLinks;
 
     bool freeIsInstalled =
@@ -145,6 +145,22 @@ class _VideoLinksState extends State<VideoLinks> {
         : _launchURL(
             playStoreUrlFreeVersion,
           );
+  }
+
+  void _episodeDownloadOnTap(String url) async {
+    final status = await Permission.storage.request();
+    if (status.isGranted) {
+      final externalDir = await getExternalStorageDirectory();
+      final id = await FlutterDownloader.enqueue(
+          url: url,
+          savedDir: externalDir.path,
+          showNotification: true,
+          fileName: widget.episodeEndPoint,
+          openFileFromNotification: true);
+    } else {
+      print('Storage Read/Write Permission denied.');
+    }
+    Navigator.pop(context);
   }
 
   // _downloadURL(String url) async {
@@ -174,26 +190,12 @@ class _VideoLinksState extends State<VideoLinks> {
                     shrinkWrap: true,
                     itemBuilder: (context, index) => ListTile(
                           onTap: widget.download
-                              ? () async {
-                                  final status =
-                                      await Permission.storage.request();
-                                  if (status.isGranted) {
-                                    final externalDir =
-                                        await getExternalStorageDirectory();
-                                    final id = await FlutterDownloader.enqueue(
-                                        url: episodeLinks[index].link,
-                                        savedDir: externalDir.path,
-                                        showNotification: true,
-                                        fileName: 'Download_Anime',
-                                        openFileFromNotification: true);
-                                  } else {
-                                    print(
-                                        'Storage Read/Write Permission denied.');
-                                  }
-                                  Navigator.pop(context);
+                              ? () {
+                                  _episodeDownloadOnTap(
+                                      episodeLinks[index].link);
                                 }
                               : () {
-                                  _episodeLinkOnTap(index);
+                                  _episodeStreamOnTap(index);
                                 },
                           title: Text(episodeLinks[index].quality),
                         ),
