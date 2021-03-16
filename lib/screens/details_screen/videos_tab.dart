@@ -1,18 +1,52 @@
-import 'package:device_apps/device_apps.dart';
+//libraries
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+//packages
+import 'package:device_apps/device_apps.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+//widgets
+//provider
 import '../../provider/http_calls.dart';
 
 class VideosTab extends StatelessWidget {
   final String titleName;
   VideosTab(this.titleName);
+  Widget _animeEpisodeOnTap(
+      {BuildContext context, int index, bool download, IconData icon}) {
+    //download is false if user wants to download the anime episode
+    return TextButton(
+        child: Icon(icon),
+        onPressed: () async {
+          Navigator.pop(context);
+          print(titleName + index.toString());
+          await showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: Text('choose one of the links:'),
+                    content: VideoLinks(
+                        episodeEndPoint:
+                            titleName + "-episode-" + (index + 1).toString(),
+                        download: download),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('close'))
+                    ],
+                  ));
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<HttpCalls>(context).searcDetailsModel;
+    final searchDetailsModel =
+        Provider.of<HttpCalls>(context, listen: false).searcDetailsModel;
     return ListView.builder(
       itemBuilder: (context, index) => ListTile(
         title: Text('Episode: ' + (index + 1).toString(),
@@ -25,63 +59,31 @@ class VideosTab extends StatelessWidget {
               builder: (context) => CupertinoAlertDialog(
                     title: Text('Choose Below'),
                     actions: [
-                      TextButton(
-                          child: Icon(Icons.slow_motion_video),
-                          onPressed: () async {
-                            Navigator.pop(context);
-                            print(titleName + index.toString());
-                            await showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text('close'))
-                                        ],
-                                        title: Text('choose one of the links:'),
-                                        content: VideoLinks(
-                                            episodeEndPoint: titleName +
-                                                "-episode-" +
-                                                (index + 1).toString(),
-                                            webViewBool: false)));
-                          }),
-                      TextButton(
-                        child: Icon(Icons.download_sharp),
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          await showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('close'))
-                                      ],
-                                      title: Text('choose one of the links:'),
-                                      content: VideoLinks(
-                                          episodeEndPoint: titleName +
-                                              "-episode-" +
-                                              (index + 1).toString(),
-                                          webViewBool: true)));
-                        },
-                      )
+                      _animeEpisodeOnTap(
+                          context: context,
+                          index: index,
+                          download: false,
+                          icon: Icons.slow_motion_video),
+                      _animeEpisodeOnTap(
+                          context: context,
+                          index: index,
+                          download: true,
+                          icon: Icons.download_sharp),
                     ],
                   ));
         },
       ),
-      itemCount: data.totalEpisode == '' ? 0 : int.parse(data.totalEpisode),
+      itemCount: searchDetailsModel.totalEpisode == ''
+          ? 0
+          : int.parse(searchDetailsModel.totalEpisode),
     );
   }
 }
 
 class VideoLinks extends StatefulWidget {
   final String episodeEndPoint;
-  final bool webViewBool;
-  VideoLinks({@required this.episodeEndPoint, @required this.webViewBool});
+  final bool download;
+  VideoLinks({@required this.episodeEndPoint, @required this.download});
 
   @override
   _VideoLinksState createState() => _VideoLinksState();
@@ -145,39 +147,57 @@ class _VideoLinksState extends State<VideoLinks> {
           );
   }
 
-  _downloadURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url, forceWebView: true, enableJavaScript: true);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+  // _downloadURL(String url) async {
+  //   if (await canLaunch(url)) {
+  //     await launch(url);
+  //   } else {
+  //     throw 'Could not launch $url';
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final prov = Provider.of<HttpCalls>(context, listen: false).episodeLinks;
+    final episodeLinks =
+        Provider.of<HttpCalls>(context, listen: false).episodeLinks;
     return _loading
-        ? CircularProgressIndicator(
+        ? const CircularProgressIndicator(
             backgroundColor: Colors.black,
           )
-        : prov.length == 0
-            ? Center(child: Text('Sorry, zero links for this video'))
+        : episodeLinks.length == 0
+            ? const Center(
+                child: const Text(
+                    'Sorry, zero links for this video or server issue!'))
             : Container(
                 height: MediaQuery.of(context).size.height * 0.5,
                 width: MediaQuery.of(context).size.width * 0.5,
                 child: ListView.builder(
                     shrinkWrap: true,
                     itemBuilder: (context, index) => ListTile(
-                          onTap: widget.webViewBool
-                              ? () {
-                                  _downloadURL(prov[index].link);
+                          onTap: widget.download
+                              ? () async {
+                                  final status =
+                                      await Permission.storage.request();
+                                  if (status.isGranted) {
+                                    final externalDir =
+                                        await getExternalStorageDirectory();
+                                    final id = await FlutterDownloader.enqueue(
+                                        url: episodeLinks[index].link,
+                                        savedDir: externalDir.path,
+                                        showNotification: true,
+                                        fileName: 'Download_Anime',
+                                        openFileFromNotification: true);
+                                  } else {
+                                    print(
+                                        'Storage Read/Write Permission denied.');
+                                  }
+                                  Navigator.pop(context);
                                 }
                               : () {
                                   _episodeLinkOnTap(index);
                                 },
-                          title: Text(prov[index].quality),
+                          title: Text(episodeLinks[index].quality),
                         ),
-                    itemCount: prov.length),
+                    itemCount: episodeLinks.length),
               );
   }
 }

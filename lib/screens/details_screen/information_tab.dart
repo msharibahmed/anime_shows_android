@@ -1,7 +1,10 @@
-import 'package:anime_shows_android/provider/http_calls.dart';
+//libraries
 import 'package:flutter/material.dart';
+//packages
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+//provider
+import '../../provider/http_calls.dart';
 
 class InformationTab extends StatefulWidget {
   final String name;
@@ -18,107 +21,88 @@ class InformationTab extends StatefulWidget {
 }
 
 class _InformationTabState extends State<InformationTab> {
-  // var _didChangeBool = true;
-  // var _loadingBool = true;
-  // @override
-  // void didChangeDependencies() {
-  //   if (_didChangeBool) {
-  //     Provider.of<HttpCalls>(context, listen: false)
-  //         .showSearchDetails(widget.link)
-  //         .then((_) {
-  //       setState(() {
-  //         _loadingBool = false;
-  //       });
-  //     });
-  //   }
-  //   _didChangeBool = false;
-  //   super.didChangeDependencies();
-  // }
-
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
-    final data = Provider.of<HttpCalls>(context).searcDetailsModel;
-    return
-    //  _loadingBool
-    //     ? Center(child: CircularProgressIndicator())
-    //     :
-         SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.network(
-                      widget.poster,
-                      fit: BoxFit.fitHeight,
-                      width: mq.width * 0.5,
-                      height: mq.height * 0.5,
-                    ),
-                    Container(
-                      width: mq.width * 0.5,
-                      height: mq.height * 0.5,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InformationRowReuse(
-                                category: 'Type: ', value: data.type),
-                            const SizedBox(
-                              height: 2,
-                            ),
-                            InformationRowReuse(
-                                category: 'Genre: ', value: data.genre),
-                            const SizedBox(
-                              height: 2,
-                            ),
-                            InformationRowReuse(
-                                category: 'Status: ', value: data.status),
-                            const SizedBox(
-                              height: 2,
-                            ),
-                            InformationRowReuse(
-                                category: 'Other Name: ',
-                                value: data.otherName==''?'None':data.otherName),
-                            const SizedBox(
-                              height: 2,
-                            ),
-                            InformationRowReuse(
-                                category: 'Release: ', value: widget.release),
-                            const SizedBox(
-                              height: 2,
-                            ),
-                            InformationRowReuse(
-                                category: 'Total Episodes: ', value: data.totalEpisode),
-                          ],
-                        ),
+    final data =
+        Provider.of<HttpCalls>(context, listen: false).searcDetailsModel;
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.network(
+                widget.poster,
+                fit: BoxFit.fitHeight,
+                width: mq.width * 0.5,
+                height: mq.height * 0.5,
+              ),
+              Container(
+                width: mq.width * 0.5,
+                height: mq.height * 0.5,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InformationRowReuse(category: 'Type: ', value: data.type),
+                      const SizedBox(
+                        height: 2,
                       ),
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    'Summary: ',
-                    style: GoogleFonts.montserrat(
-                        fontSize: 20, fontWeight: FontWeight.w600),
+                      InformationRowReuse(
+                          category: 'Genre: ', value: data.genre),
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      InformationRowReuse(
+                          category: 'Status: ', value: data.status),
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      InformationRowReuse(
+                          category: 'Other Name: ',
+                          value:
+                              data.otherName == '' ? 'None' : data.otherName),
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      InformationRowReuse(
+                          category: 'Release: ', value: widget.release),
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      InformationRowReuse(
+                          category: 'Total Episodes: ',
+                          value: data.totalEpisode),
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0,bottom: 10),
-                  child: Text(
-                    data.summary,
-                    style: GoogleFonts.montserrat(
-                        fontSize: 15, fontWeight: FontWeight.w400),
-                  ),
-                ),
-              ],
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+              'Summary: ',
+              style: GoogleFonts.montserrat(
+                  fontSize: 20, fontWeight: FontWeight.w600),
             ),
-          );
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0, bottom: 10),
+            child: Text(
+              data.summary,
+              style: GoogleFonts.montserrat(
+                  fontSize: 15, fontWeight: FontWeight.w400),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
