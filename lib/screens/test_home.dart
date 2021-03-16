@@ -146,11 +146,12 @@ class _HomeTestState extends State<HomeTest> {
         ),
       ),
       backgroundColor: Colors.white,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.pushNamed(context, DownloadScreen.routeName);
           },
-          child: const Icon(Icons.file_download)),
+          label: Text('Downloads'),
+          icon: const Icon(Icons.file_download)),
       resizeToAvoidBottomInset: false,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
