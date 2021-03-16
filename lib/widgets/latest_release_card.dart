@@ -1,4 +1,3 @@
-
 import 'package:anime_shows_android/provider/http_calls.dart';
 import 'package:anime_shows_android/screens/details_screen/videos_tab.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +11,7 @@ class LatestReleaseCard extends StatelessWidget {
   LatestReleaseCard(this.index, this._loading1);
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<HttpCalls>(context, listen: false).latestRelaease;
+    final data = Provider.of<HttpCalls>(context, listen: false).latestRelease;
     return ReuseCard(
         loading1: _loading1,
         text1: data[index].name,
@@ -50,70 +49,75 @@ class ReuseCard extends StatelessWidget {
           : () {
               showDialog(
                   context: context,
-                  builder: (context)=>CupertinoAlertDialog(
-                    title: Text('Choose Below'),
-                    actions: [
-                      TextButton(
-                          child: Row(
-                            children: [
-                              Text(
-                                'Stream Now',
-                                style: TextStyle(color: Colors.blue),
+                  builder: (context) => CupertinoAlertDialog(
+                        title: Text('Choose Below'),
+                        actions: [
+                          TextButton(
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Stream Now',
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                  Icon(Icons.slow_motion_video)
+                                ],
                               ),
-                              Icon(Icons.slow_motion_video)
-                            ],
-                          ),
-                          onPressed: () async {
-                            print(
-                              link.replaceFirst(RegExp(r'https://gogoanime.so/'), ''),
-                            );
-                            Navigator.pop(context);
-                            await showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text('close'))
-                                        ],
-                                        title: Text('choose one of the links:'),
-                                        content: VideoLinks(
-                                            episodeEndPoint: 
-                              link.replaceFirst(RegExp(r'https://gogoanime.so/'), ''),
-                                            webViewBool: false)));
-                          }),
-                      TextButton(
-                        child: Row(
-                          children: [
-                            Text(
-                              'Download Now',
-                              style: TextStyle(color: Colors.blue),
+                              onPressed: () async {
+                                print(
+                                  link.replaceFirst(
+                                      RegExp(r'https://gogoanime.so/'), ''),
+                                );
+                                Navigator.pop(context);
+                                await showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text('close'))
+                                            ],
+                                            title: Text(
+                                                'choose one of the links:'),
+                                            content: VideoLinks(
+                                                episodeEndPoint: link.replaceFirst(
+                                                    RegExp(
+                                                        r'https://gogoanime.so/'),
+                                                    ''),
+                                                download: false)));
+                              }),
+                          TextButton(
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Download Now',
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                                Icon(Icons.download_sharp)
+                              ],
                             ),
-                            Icon(Icons.download_sharp)
-                          ],
-                        ),
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          await showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('close'))
-                                      ],
-                                      title: Text('choose one of the links:'),
-                                      content: VideoLinks(
-                                          episodeEndPoint: link,
-                                          webViewBool: true)));
-                        },
-                      )
-                    ],
-                  ));
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              await showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('close'))
+                                          ],
+                                          title:
+                                              Text('choose one of the links:'),
+                                          content: VideoLinks(
+                                              episodeEndPoint: link,
+                                              download: true)));
+                            },
+                          )
+                        ],
+                      ));
             },
       child: Row(children: [
         Container(
