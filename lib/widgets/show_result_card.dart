@@ -1,45 +1,51 @@
-import 'package:anime_shows_android/screens/details_screen/details_screen.dart';
+//libraries
 import 'package:flutter/material.dart';
+//packages
 import 'package:google_fonts/google_fonts.dart';
+//screens
+import '../screens/details_screen/details_screen.dart';
 
 class ShowResultCard extends StatelessWidget {
   const ShowResultCard({
     Key key,
     @required bool loading1,
-    @required this.text1,
-    @required this.text2,
-    @required this.poster,
-    @required this.link,
+    @required this.animeName,
+    @required this.animeRelease,
+    @required this.animeLink,
+    @required this.animePoster,
     @required this.index,
   })  : _loading1 = loading1,
         super(key: key);
 
   final bool _loading1;
-  final String text1;
-  final String text2;
-  final String link;
-  final String poster;
+  final String animeName;
+  final String animeRelease;
+  final String animeLink;
+  final String animePoster;
   final int index;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap:_loading1?(){}: () {
-        Navigator.pushNamed(context, DetailsScreen.routeName,
-            arguments: [text1, text2, link, poster]);
-      },
+      onTap: _loading1
+          ? () {}
+          : () {
+              Navigator.pushNamed(context, DetailsScreen.routeName,
+                  arguments: [animeName, animeRelease, animeLink, animePoster]);
+            },
       child: Row(children: [
         Container(
           decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.grey[300],
               ),
-              borderRadius: BorderRadius.all(Radius.circular(20))),
+              borderRadius: const BorderRadius.all(const Radius.circular(20))),
           margin: const EdgeInsets.only(left: 16, top: 16),
           child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderRadius: const BorderRadius.all(const Radius.circular(20)),
             child: _loading1
                 ? Container(
+                    //will use this container for shimmering effect
                     height: 130,
                     width: 90,
                     child: Container(
@@ -47,7 +53,7 @@ class ShowResultCard extends StatelessWidget {
                     ),
                   )
                 : Image.network(
-                    poster,
+                    animePoster,
                     height: 130,
                     width: 90,
                     fit: BoxFit.fitHeight,
@@ -61,12 +67,12 @@ class ShowResultCard extends StatelessWidget {
                 border: Border.all(
                   color: Colors.grey[300],
                 ),
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    bottomRight: Radius.circular(20))),
+                borderRadius: const BorderRadius.only(
+                    topRight: const Radius.circular(20),
+                    bottomRight: const Radius.circular(20))),
             margin: const EdgeInsets.only(right: 16, top: 16),
             child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderRadius: const BorderRadius.all(const Radius.circular(20)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,14 +88,14 @@ class ShowResultCard extends StatelessWidget {
                                   fontWeight: FontWeight.w600),
                             ),
                             Expanded(
-                              child: Text(_loading1 ? '' : text1,
+                              child: Text(_loading1 ? '' : animeName,
                                   style: GoogleFonts.montserrat(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.w400)),
                             )
                           ],
                         )),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
                     Padding(
@@ -100,7 +106,7 @@ class ShowResultCard extends StatelessWidget {
                           Text('Release: ',
                               style: GoogleFonts.montserrat(
                                   fontWeight: FontWeight.w600)),
-                          Text(_loading1 ? '' : text2,
+                          Text(_loading1 ? '' : animeRelease,
                               style: GoogleFonts.montserrat(
                                   color: Colors.grey,
                                   fontWeight: FontWeight.w400))
