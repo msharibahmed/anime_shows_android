@@ -93,11 +93,11 @@ class _HomeTestState extends State<HomeTest> {
         padding: const EdgeInsets.only(left: 8.0, top: 8),
         child: Container(
           decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                  topLeft: const Radius.circular(5),
-                  bottomLeft: const Radius.circular(5)),
-              color: Colors.black12),
-          height: 200,
+            borderRadius: const BorderRadius.only(
+                topLeft: const Radius.circular(5),
+                bottomLeft: const Radius.circular(5)),
+          ),
+          height: 210,
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,9 +106,7 @@ class _HomeTestState extends State<HomeTest> {
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Text('Latest Release(SUB)',
                     style: GoogleFonts.openSans(
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20)),
+                        fontWeight: FontWeight.w600, fontSize: 20)),
               ),
               Consumer<HttpCalls>(
                 builder: (context, httpCallsObject, _) => _loading1
