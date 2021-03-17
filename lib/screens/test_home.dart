@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 //screens
 import 'downloads.dart';
+import 'full_latest_release_screen.dart';
 import 'search_result.dart';
 //widgets
 import '../widgets/latest_release_home.dart';
@@ -104,9 +105,23 @@ class _HomeTestState extends State<HomeTest> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 10.0),
-                child: Text('Latest Release(SUB)',
-                    style: GoogleFonts.openSans(
-                        fontWeight: FontWeight.w600, fontSize: 20)),
+                child: Row(children: [
+                  Text('Latest Release(SUB)',
+                      style: GoogleFonts.openSans(
+                          fontWeight: FontWeight.w600, fontSize: 20)),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(
+                            context, FullLatestRelease.routeName);
+                      },
+                      child:const Text(
+                        'View All',
+                        style:const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline),
+                      ))
+                ]),
               ),
               Consumer<HttpCalls>(
                 builder: (context, httpCallsObject, _) => _loading1
