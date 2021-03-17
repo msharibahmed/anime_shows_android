@@ -24,36 +24,40 @@ class _DownloadScreenState extends State<DownloadScreen> {
     });
   }
 
+  void _deleteTask(String id) async {
+    await FlutterDownloader.remove(taskId: id, shouldDeleteContent: true);
+    print('task deleted');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child:const Text('cancel'),
-        onPressed: () {
-          FlutterDownloader.cancelAll();
-        },
-      ),
       appBar: AppBar(
         centerTitle: true,
-        title:const Text('Downloads'),
+        title: const Text('Downloads'),
       ),
       body: _loading
-          ?const Center(child:const CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: _downloadTask.length,
-              itemBuilder: (context, index) => ListTile(
-                    leading: Text((index + 1).toString() + '.'),
-                    title: Text(_downloadTask[index].filename),
-                    subtitle: Text('Progress:' +
-                        _downloadTask[index].progress.toString() +
-                        '%'),
-                    trailing: ElevatedButton(
-                        onPressed: () async {
-                          await FlutterDownloader.cancel(
-                              taskId: _downloadTask[index].taskId);
-                        },
-                        child:const Text('cancel')),
-                  )),
+          ? const Center(child: const CircularProgressIndicator())
+          : _downloadTask.length == 0
+              ? const Center(
+                  child: const Text('No downloads in queue!'),
+                )
+              : ListView.builder(
+                  itemCount: _downloadTask.length,
+                  itemBuilder: (context, index) => ListTile(
+                        leading: Text((index + 1).toString() + '.'),
+                        title: Text(_downloadTask[index].filename),
+                        subtitle: Text('Progress:' +
+                            _downloadTask[index].progress.toString() +
+                            '%'),
+                        trailing: ElevatedButton(
+                            onPressed: () async {
+                              _deleteTask(_downloadTask[index].taskId);
+                              // await FlutterDownloader.cancel(
+                              //     taskId: _downloadTask[index].taskId);
+                            },
+                            child: const Text('cancel')),
+                      )),
     );
   }
 }
