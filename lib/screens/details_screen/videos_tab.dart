@@ -27,6 +27,7 @@ class VideosTab extends StatelessWidget {
           await showDialog(
               context: context,
               builder: (context) => AlertDialog(
+                    scrollable: true,
                     title: Text('choose one of the links:'),
                     content: VideoLinks(
                         episodeEndPoint:
@@ -163,32 +164,26 @@ class _VideoLinksState extends State<VideoLinks> {
     Navigator.pop(context);
   }
 
-  // _downloadURL(String url) async {
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   } else {
-  //     throw 'Could not launch $url';
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final episodeLinks =
         Provider.of<HttpCalls>(context, listen: false).episodeLinks;
     return _loading
-        ? const CircularProgressIndicator(
-            backgroundColor: Colors.black,
+        ? Center(
+            child: Text('Be patient, fetching links...'),
           )
         : episodeLinks.length == 0
             ? const Center(
                 child: const Text(
                     'Sorry, zero links for this video or server issue!'))
             : Container(
-                height: MediaQuery.of(context).size.height * 0.5,
-                width: MediaQuery.of(context).size.width * 0.5,
+                height: MediaQuery.of(context).size.height * 0.3,
+                width: MediaQuery.of(context).size.width * 0.8,
                 child: ListView.builder(
                     shrinkWrap: true,
                     itemBuilder: (context, index) => ListTile(
+                          title: Text(episodeLinks[index].quality),
+                          leading: Text((index + 1).toString() + '.'),
                           onTap: widget.download
                               ? () {
                                   _episodeDownloadOnTap(
@@ -197,7 +192,6 @@ class _VideoLinksState extends State<VideoLinks> {
                               : () {
                                   _episodeStreamOnTap(index);
                                 },
-                          title: Text(episodeLinks[index].quality),
                         ),
                     itemCount: episodeLinks.length),
               );
