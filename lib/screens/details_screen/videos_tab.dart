@@ -152,6 +152,7 @@ class _VideoLinksState extends State<VideoLinks> {
     final status = await Permission.storage.request();
     if (status.isGranted) {
       final externalDir = await getExternalStorageDirectory();
+      print(url);
       final id = await FlutterDownloader.enqueue(
           url: url,
           savedDir: externalDir.path,

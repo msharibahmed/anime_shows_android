@@ -18,6 +18,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
     super.initState();
     FlutterDownloader.loadTasks().then((downloadList) {
       _downloadTask = downloadList;
+      print(_downloadTask);
       setState(() {
         _loading = false;
       });
